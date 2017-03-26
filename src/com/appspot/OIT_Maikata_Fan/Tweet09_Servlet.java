@@ -21,6 +21,7 @@ public class Tweet09_Servlet extends HttpServlet {
     TwitterHelper.checkNews(pm);
     TwitterHelper.checkNewsI(pm);
     TwitterHelper.checkPortal(pm);
+    TwitterHelper.doTasks(pm);
     
     pm.close();
     

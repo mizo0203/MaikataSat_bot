@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.logging.*;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 
 import twitter4j.IDs;
 import twitter4j.MediaEntity;
@@ -22,6 +23,7 @@ import twitter4j.User;
 import twitter4j.auth.*;
 
 import java.util.Collections;
+
 import net.sf.jsr107cache.*;
 
 public final class TwitterHelper {
@@ -64,7 +66,7 @@ public final class TwitterHelper {
     }
   }
 
-  static Entry tweetEntry(Stack<Entry> entries) {
+  static Entry tweetEntry(PersistenceManager pm, Stack<Entry> entries) {
     Entry entry = null;
     while (!entries.isEmpty()) {
       entry = entries.pop();
@@ -72,7 +74,7 @@ public final class TwitterHelper {
         if (entries.size() > 5)
           log.severe("tweet todo:" + entry.getAllText());
         else
-          twitter.updateStatus(entry.getAllText());
+          pm.makePersistent(new Task(entry.getAllText()));
       } catch (Exception e) {
         log.severe(entry.getAllText() + "\n" + e.getMessage());
       }
@@ -80,37 +82,52 @@ public final class TwitterHelper {
     return entry;
   }
 
-  static private void tweetEntry(Stack<Entry> entries, Site oldSite) {
-    Entry entry = tweetEntry(entries);
+  static private void tweetEntry(PersistenceManager pm, Stack<Entry> entries, Site oldSite) {
+    Entry entry = tweetEntry(pm, entries);
     if (entry != null)
       oldSite.setTitle(entry);
   }
 
   static boolean checkWarn() {
+    // <table
     try {
-      URL url = new URL("http://bousai.tenki.jp/bousai/warn/city-81.html");
+      URL url = new URL("http://www.tenki.jp/bousai/warn/6/30/");
       String line;
       URLConnection http = url.openConnection();
       http.connect();
       InputStreamReader isr = new InputStreamReader(http.getInputStream(), "UTF-8");
       BufferedReader br = new BufferedReader(isr);
+      while ((line = br.readLine()) != null)
+        if (line.indexOf("<table") != -1)
+          break;
       while ((line = br.readLine()) != null) {
+        System.out.println(line);
         if (line.indexOf("<span class=\"is_warn\">暴風</span>") != -1) {
           return true;
+        }
+        if (line.indexOf("</table>") != -1) {
+          break;
         }
       }
     } catch (Exception e) {
     }
     try {
-      URL url = new URL("http://bousai.tenki.jp/bousai/warn/city-79.html");
+      URL url = new URL("http://www.tenki.jp/bousai/warn/6/29/");
       String line;
       URLConnection http = url.openConnection();
       http.connect();
       InputStreamReader isr = new InputStreamReader(http.getInputStream(), "UTF-8");
       BufferedReader br = new BufferedReader(isr);
+      while ((line = br.readLine()) != null)
+        if (line.indexOf("<table") != -1)
+          break;
       while ((line = br.readLine()) != null) {
+        System.out.println(line);
         if (line.indexOf("<span class=\"is_warn\">暴風</span>") != -1) {
           return true;
+        }
+        if (line.indexOf("</table>") != -1) {
+          break;
         }
       }
     } catch (Exception e) {
@@ -153,7 +170,7 @@ public final class TwitterHelper {
       }
       br.close();
       isr.close();
-      tweetEntry(stack, oldSite);
+      tweetEntry(pm, stack, oldSite);
     } catch (MalformedURLException e) {
       log.severe(e.getMessage());
     } catch (IOException e) {
@@ -194,7 +211,7 @@ public final class TwitterHelper {
       }
       br.close();
       isr.close();
-      tweetEntry(stack, oldSite);
+      tweetEntry(pm, stack, oldSite);
     } catch (MalformedURLException e) {
       log.severe(e.getMessage());
     } catch (IOException e) {
@@ -240,7 +257,7 @@ public final class TwitterHelper {
       }
       br.close();
       isr.close();
-      tweetEntry(stack, oldSite);
+      tweetEntry(pm, stack, oldSite);
     } catch (MalformedURLException e) {
       log.severe(e.getMessage());
     } catch (IOException e) {
@@ -287,7 +304,7 @@ public final class TwitterHelper {
       }
       br.close();
       isr.close();
-      tweetEntry(stack, oldSite);
+      tweetEntry(pm, stack, oldSite);
     } catch (MalformedURLException e) {
       log.severe(e.getMessage());
     } catch (IOException e) {
@@ -295,7 +312,7 @@ public final class TwitterHelper {
     }
   }
 
-  static void checkTenki() {
+  static void checkTenki(PersistenceManager pm) {
     Stack<Entry> stack = new Stack<Entry>();
     try {
       // url = new
@@ -320,7 +337,7 @@ public final class TwitterHelper {
         stack.push(new Entry(line, line2));
       br.close();
       isr.close();
-      tweetEntry(stack);
+      tweetEntry(pm, stack);
     } catch (MalformedURLException e) {
       log.severe(e.getMessage());
     } catch (IOException e) {
@@ -349,18 +366,18 @@ public final class TwitterHelper {
         entry = new Entry(str);
         StatusUpdate su = new StatusUpdate(entry.getAllText());
         su.setInReplyToStatusId(best.getMax_id());
-        twitter.updateStatus(su);
+        pm.makePersistent(new Task(su));
       } catch (TwitterException e) {
         log.severe("InReply:" + best.getMax_id() + "\n" + entry.getAllText() + "\n"
             + e.getMessage());
       }
-      TwitterHelper.tweetEntry(stack);
+      TwitterHelper.tweetEntry(pm, stack);
     } catch (Exception e) {
 
     }
   }
 
-  static void checkNakanishi() {
+  static void checkNakanishi(PersistenceManager pm) {
     Stack<Long> stack = new Stack<Long>();
     try {
       ResponseList<Status> statuses = twitter.getUserTimeline(150280258);
@@ -371,23 +388,7 @@ public final class TwitterHelper {
       }
       while (!stack.isEmpty()) {
         Long id = stack.pop();
-        try {
-          twitter.retweetStatus(id);
-        } catch (TwitterException e) {
-          if (e.getStatusCode() != 403) {
-            /*
-             * 403:The request is understood, but it has been refused. An
-             * accompanying error message will explain why. This code is used
-             * when requests are being denied due to update limits
-             * (https://support .twitter.com/articles/15364-about-twitter-limits
-             * -update-api-dm-and-following).
-             */
-            Status status = myShowStatus(id);
-            log.severe("retweetStatus(" + id + ")\n" + status.getUser().getScreenName()
-                + ":" + status.getText() + "\n" + status.isRetweet() + " "
-                + status.isRetweetedByMe() + e.getMessage());
-          }
-        }
+        pm.makePersistent(new Task(id));
       }
     } catch (TwitterException e) {
       log.warning(e.toString());
@@ -430,7 +431,9 @@ public final class TwitterHelper {
             }
           }
         } catch (TwitterException e) {
-          log.severe("写真\n" + e.toString());
+          if (e.getStatusCode() != 404) {
+            log.severe("写真\n" + e.toString());
+          }
         }
       }
     }
@@ -503,11 +506,7 @@ public final class TwitterHelper {
     }
     while (!stack.isEmpty()) {
       Long id = stack.pop();
-      try {
-        twitter.retweetStatus(id);
-      } catch (TwitterException e) {
-        log.severe(e.getMessage());
-      }
+      pm.makePersistent(new Task(id));
     }
   }
 
@@ -566,7 +565,9 @@ public final class TwitterHelper {
             status_favmax = status;
           }
         } catch (TwitterException e) {
-          log.severe(id + " " + e.getMessage());
+          if (e.getStatusCode() != 404) {
+            log.severe(id + " " + e.getMessage());
+          }
         }
       }
       pm.deletePersistent(tweet);
@@ -838,6 +839,18 @@ public final class TwitterHelper {
       }
     } catch (TwitterException e) {
       log.info(e.getMessage());
+    }
+
+  }
+
+  static void doTasks(PersistenceManager pm) {
+    Query query = pm.newQuery(Task.class);
+    @SuppressWarnings("unchecked")
+    List<Task> tasks = (List<Task>) query.execute();
+    for (Task task : tasks) {
+      boolean bool = task.doTask();
+      if (bool)
+        pm.deletePersistent(task);
     }
 
   }

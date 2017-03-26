@@ -18,9 +18,10 @@ public class Tweet5min_Servlet extends HttpServlet {
     PersistenceManager pm = PMF.get().getPersistenceManager();
     TwitterHelper.renewFav(pm);
     TwitterHelper.doRetweet(pm);
-    TwitterHelper.checkNakanishi();
+    TwitterHelper.checkNakanishi(pm);
     TwitterHelper.connectFollow();
     TwitterHelper.reFollow();
+    TwitterHelper.doTasks(pm);
     pm.close();
 
   }

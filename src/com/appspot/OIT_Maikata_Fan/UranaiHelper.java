@@ -27,7 +27,7 @@ public final class UranaiHelper {
     if (uranai != null) {
       Entry entry = new Entry(uranai.getAllText());
       stack.push(entry);
-      TwitterHelper.tweetEntry(stack);
+      TwitterHelper.tweetEntry(pm, stack);
     }
   }
 

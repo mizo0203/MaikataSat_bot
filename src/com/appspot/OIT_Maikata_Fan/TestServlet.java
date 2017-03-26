@@ -84,15 +84,8 @@ public class TestServlet extends HttpServlet {
     // resp.getWriter().println(s.toString());
 
   }
-
-  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
-    resp.setContentType("text/html; charset=UTF-8");
-    resp.getWriter().println("<html><head>");
-    resp.getWriter().println(
-        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
-    resp.getWriter().println("<title>TestServlet</title>");
-    resp.getWriter().println("</head><body>");
+  
+  void makeUranai(HttpServletResponse resp) throws IOException  {
     try {
       twitter.verifyCredentials();
       PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -123,17 +116,28 @@ public class TestServlet extends HttpServlet {
     } catch (TwitterException e) {
       log.severe(e.getMessage());
     }
-    // PersistenceManager pm = PMF.get().getPersistenceManager();
-    // Twitter twitter = new TwitterFactory().getInstance();
-    // twitter.setOAuthConsumer("73FKZ1VWMYze0ke59VnV4g",
-    // "ZYxxqsWJJkYWFpo7zxf431JT0pgctbGPacLa6Zig");
-    // twitter.setOAuthAccessToken(new
-    // AccessToken("356018358-9M4X1qCy3ouj2MzztL6VeU1Cd97Q0l9QUo8vyqzr",
-    // "SOzsEoSDYO3ayiboolhUxdBlklbs0ooNPbphc7cFUI"));
+  }
 
-    // Twitter twitter = new TwitterFactory().getInstance(new AccessToken(
-    // "356018358-9M4X1qCy3ouj2MzztL6VeU1Cd97Q0l9QUo8vyqzr",
-    // "SOzsEoSDYO3ayiboolhUxdBlklbs0ooNPbphc7cFUI"));
+  public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+
+    resp.setContentType("text/html; charset=UTF-8");
+    resp.getWriter().println("<html><head>");
+    resp.getWriter().println(
+        "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />");
+    resp.getWriter().println("<title>TestServlet</title>");
+    resp.getWriter().println("</head><body>");
+
+    PersistenceManager pm = PMF.get().getPersistenceManager();
+    
+    StatusUpdate su;
+    Task task;
+    su = new StatusUpdate("@mizo0203 テスト1");
+    task = new Task(su);
+    pm.makePersistent(task);
+    su = new StatusUpdate("@mizo0203 テスト2");
+    task = new Task(su);
+    pm.makePersistent(task);
+    pm.close();
     resp.getWriter().println("</body></html>");
 
   }

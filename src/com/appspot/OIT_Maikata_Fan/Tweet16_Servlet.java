@@ -22,6 +22,7 @@ public class Tweet16_Servlet extends HttpServlet {
     TwitterHelper.checkNewsI(pm);
     TwitterHelper.checkPortal(pm);
     TwitterHelper.checkBestFav(pm);
+    TwitterHelper.doTasks(pm);
     pm.close();
 
   }
