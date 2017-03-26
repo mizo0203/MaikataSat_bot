@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+<cron>
+  <url>/cron/tweet07</url>
+  <description>bot reaction</description>
+  <schedule>every day 7:10</schedule>
+  <timezone>Asia/Tokyo</timezone>
+</cron>
+
+<cron>
+  <url>/cron/tweet09</url>
+  <description>bot reaction</description>
+  <schedule>every day 9:00</schedule>
+  <timezone>Asia/Tokyo</timezone>
+</cron>
+
+<cron>
+  <url>/cron/tweet11</url>
+  <description>bot reaction</description>
+  <schedule>every day 11:10</schedule>
+  <timezone>Asia/Tokyo</timezone>
+</cron>
+
+<cron>
+  <url>/cron/tweet12</url>
+  <description>bot reaction</description>
+  <schedule>every day 12:30</schedule>
+  <timezone>Asia/Tokyo</timezone>
+</cron>
+
+<cron>
+  <url>/cron/tweet16</url>
+  <description>bot reaction</description>
+  <schedule>every day 16:30</schedule>
+  <timezone>Asia/Tokyo</timezone>
+</cron>
+
+<cron>
+  <url>/cron/reducefriends</url>
+  <description>bot reaction</description>
+  <schedule>every monday 06:00</schedule>
+  <timezone>Asia/Tokyo</timezone>
+</cron>
+
+<cron>
+  <url>/cron/tweet5min</url>
+  <description>bot reaction</description>
+  <schedule>every 5 minutes</schedule>
+  <timezone>Asia/Tokyo</timezone>
+</cron>
+</cronentries>

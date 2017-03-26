@@ -1,2 +1,7 @@
 # Google App Engine generated folder
-appengine-generated/
+.classpath
+.project
+.settings/
+.DS_Store
+bin/
+classes/

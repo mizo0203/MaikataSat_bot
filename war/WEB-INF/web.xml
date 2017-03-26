@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?><web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<servlet>
+		<servlet-name>OIT_Maikata_Fan</servlet-name>
+		<servlet-class>com.appspot.OIT_Maikata_Fan.OIT_Maikata_Fan_Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>OIT_Maikata_Fan</servlet-name>
+		<url-pattern>/cron/oit_maikata_fan</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>Tweet07</servlet-name>
+		<servlet-class>com.appspot.OIT_Maikata_Fan.Tweet07_Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Tweet07</servlet-name>
+		<url-pattern>/cron/tweet07</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>Tweet09</servlet-name>
+		<servlet-class>com.appspot.OIT_Maikata_Fan.Tweet09_Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Tweet09</servlet-name>
+		<url-pattern>/cron/tweet09</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>Tweet11</servlet-name>
+		<servlet-class>com.appspot.OIT_Maikata_Fan.Tweet11_Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Tweet11</servlet-name>
+		<url-pattern>/cron/tweet11</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>Tweet12</servlet-name>
+		<servlet-class>com.appspot.OIT_Maikata_Fan.Tweet12_Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Tweet12</servlet-name>
+		<url-pattern>/cron/tweet12</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>Tweet16</servlet-name>
+		<servlet-class>com.appspot.OIT_Maikata_Fan.Tweet16_Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Tweet16</servlet-name>
+		<url-pattern>/cron/tweet16</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>Tweet5min</servlet-name>
+		<servlet-class>com.appspot.OIT_Maikata_Fan.Tweet5min_Servlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Tweet5min</servlet-name>
+		<url-pattern>/cron/tweet5min</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>ReduceFriends</servlet-name>
+		<servlet-class>com.appspot.OIT_Maikata_Fan.ReduceFriendsServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ReduceFriends</servlet-name>
+		<url-pattern>/cron/reducefriends</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Test</servlet-name>
+		<servlet-class>com.appspot.OIT_Maikata_Fan.TestServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Test</servlet-name>
+		<url-pattern>/cron/test</url-pattern>
+	</servlet-mapping>
+
+	<!-- https://developers.google.com/appengine/docs/java/config/cron?hl=ja -->
+	<security-constraint>
+		<web-resource-collection>
+		<web-resource-name>admin page</web-resource-name>
+		<url-pattern>/cron/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+ <servlet>
+  <servlet-name>SystemServiceServlet</servlet-name>
+  <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
+  <init-param>
+   <param-name>services</param-name>
+   <param-value/>
+  </init-param>
+ </servlet>
+ <servlet-mapping>
+  <servlet-name>SystemServiceServlet</servlet-name>
+  <url-pattern>/_ah/spi/*</url-pattern>
+ </servlet-mapping>
+</web-app>
