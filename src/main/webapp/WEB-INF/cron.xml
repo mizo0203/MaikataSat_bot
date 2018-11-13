@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+    <cron>
+        <url>/cron/every15mins</url>
+        <description>bot reaction</description>
+        <schedule>every 15 minutes</schedule>
+        <timezone>Asia/Tokyo</timezone>
+    </cron>
+    <cron>
+        <url>/cron/every1630</url>
+        <description>bot reaction</description>
+        <schedule>every day 16:30</schedule>
+        <timezone>Asia/Tokyo</timezone>
+    </cron>
+</cronentries>
