@@ -1,49 +1,63 @@
 package com.appspot.OIT_Maikata_Fan;
 
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 
-import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
-@PersistenceCapable(identityType = IdentityType.APPLICATION, detachable = "true")
+/**
+ * The @Entity tells Objectify about our entity. We also register it in {@link OfyHelper} Our
+ * primary key @Id is set automatically by the Google Datastore for us.
+ *
+ * <p>We add a @Parent to tell the object about its ancestor. We are doing this to support many
+ * guestbooks. Objectify, unlike the AppEngine library requires that you specify the fields you want
+ * to index using @Index. Only indexing the fields you need can lead to substantial gains in
+ * performance -- though if not indexing your data from the start will require indexing it later.
+ *
+ * <p>NOTE - all the properties are PUBLIC so that can keep the code simple.
+ */
+@Entity
 public class TwitterAccessToken implements Serializable {
 
     /**
      * Access Token
      */
-    @PrimaryKey
+    @Id
     private final String accessToken;
 
     /**
      * Access Token Secret
      */
-    @Persistent
-    private final String accessTokenSecret;
+    private String accessTokenSecret;
 
     /**
      * Consumer Key (API Key)
      */
-    @Persistent
-    private final String consumerKey;
+    private String consumerKey;
 
     /**
      * Consumer Secret (API Secret)
      */
-    @Persistent
-    private final String consumerSecret;
+    private String consumerSecret;
+
+    @SuppressWarnings("unused")
+    public TwitterAccessToken() {
+        // CommitCommentEventEntity must have a no-arg constructor
+        this.accessToken = "";
+        this.accessTokenSecret = "";
+        this.consumerKey = "";
+        this.consumerSecret = "";
+    }
 
     public TwitterAccessToken(
-            String accessToken, String accessTokenSecret, String consumerKey, String consumerSecret) {
+            String accessToken) {
         this.accessToken = accessToken;
-        this.accessTokenSecret = accessTokenSecret;
-        this.consumerKey = consumerKey;
-        this.consumerSecret = consumerSecret;
+        this.accessTokenSecret = "";
+        this.consumerKey = "";
+        this.consumerSecret = "";
     }
 
     public Twitter getTwitter() {

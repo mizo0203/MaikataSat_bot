@@ -2,7 +2,6 @@ package com.appspot.OIT_Maikata_Fan;
 
 import twitter4j.*;
 
-import javax.jdo.PersistenceManager;
 import java.util.*;
 import java.util.TimeZone;
 import java.util.logging.Level;
@@ -11,10 +10,15 @@ import java.util.logging.Logger;
 public class Repository {
     private static final Logger LOG = Logger.getLogger(Repository.class.getName());
 
-    private final PersistenceManager mPm = PMF.get().getPersistenceManager();
+    private final OfyManager mOfy = OfyManager.getInstance();
 
     public Twitter getVerifiedTwitter(String accessToken) throws TwitterException {
-        Twitter twitter = mPm.getObjectById(TwitterAccessToken.class, accessToken).getTwitter();
+        TwitterAccessToken twitterAccessToken = mOfy.getObjectById(TwitterAccessToken.class, accessToken);
+        if (twitterAccessToken == null) {
+            twitterAccessToken = new TwitterAccessToken(accessToken);
+            mOfy.makePersistent(twitterAccessToken);
+        }
+        Twitter twitter = twitterAccessToken.getTwitter();
         twitter.verifyCredentials();
         return twitter;
     }
@@ -78,7 +82,7 @@ public class Repository {
     }
 
     public void setStartMonitoringStatusIds(List<Long> ids) {
-        mPm.makePersistent(new Tweet(System.currentTimeMillis(), ids));
+        mOfy.makePersistent(new Tweet(System.currentTimeMillis(), ids));
     }
 
     public List<Long> getFinishMonitoringStatusIds() {
@@ -87,17 +91,12 @@ public class Repository {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+9:00")); // …(B)
         cal.add(Calendar.MINUTE, -990); // -7:30 -450 // 16:30 -990
 
-        // https://developers.google.com/appengine/docs/java/datastore/queries?hl=ja&csw=1#Restrictions_on_Queries
-        javax.jdo.Query query = mPm.newQuery(Tweet.class);
-        query.declareParameters("String tmp");
-        query.setFilter("date < tmp");
-
         @SuppressWarnings("unchecked")
-        List<Tweet> tweetids = (List<Tweet>) query.execute(String.valueOf(cal.getTime().getTime()));
+        List<Tweet> tweetids = mOfy.queryObjectByKey(Tweet.class, "<", String.valueOf(cal.getTime().getTime()));
 
         for (Tweet tweet : tweetids) {
             ret.addAll(tweet.getIds());
-            mPm.deletePersistent(tweet);
+            mOfy.deletePersistent(tweet);
         }
 
         return ret;
@@ -105,7 +104,7 @@ public class Repository {
 
     public void updateBestFav(Status status_favmax) {
         try {
-            TweetFav day = mPm.getObjectById(TweetFav.class, "dairy");
+            TweetFav day = mOfy.getObjectById(TweetFav.class, "dairy");
             LOG.info(
                     "dairy: getMax_favnum(): "
                             + day.getMax_favnum()
@@ -117,14 +116,14 @@ public class Repository {
             }
         } catch (Exception e) {
             TweetFav day = new TweetFav("dairy", status_favmax.getId(), status_favmax.getFavoriteCount());
-            mPm.makePersistent(day);
+            mOfy.makePersistent(day);
         }
     }
 
     public StatusUpdate getDailyFav(Twitter twitter) throws TwitterException {
         TweetFav best = null;
         try {
-            best = mPm.getObjectById(TweetFav.class, "dairy");
+            best = mOfy.getObjectById(TweetFav.class, "dairy");
         } catch (Exception e) {
             LOG.log(Level.SEVERE, e.getMessage(), e);
         }
@@ -158,7 +157,7 @@ public class Repository {
                                 + status.getId());
         StatusUpdate latestStatus = new StatusUpdate(entry.getAllText());
         latestStatus.setInReplyToStatusId(status.getId());
-        mPm.deletePersistent(best);
+        mOfy.deletePersistent(best);
         return latestStatus;
     }
 
@@ -173,6 +172,6 @@ public class Repository {
     }
 
     public void destroy() {
-        mPm.close();
+        mOfy.close();
     }
 }
