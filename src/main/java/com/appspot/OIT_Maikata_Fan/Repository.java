@@ -113,6 +113,7 @@ public class Repository {
                             + day.getMax_id());
             if (status_favmax.getFavoriteCount() > day.getMax_favnum()) {
                 day.setTweetFav(status_favmax.getId(), status_favmax.getFavoriteCount());
+                mOfy.makePersistent(day);
             }
         } catch (Exception e) {
             TweetFav day = new TweetFav("dairy", status_favmax.getId(), status_favmax.getFavoriteCount());
