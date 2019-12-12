@@ -18,7 +18,7 @@ Bot アカウント: [@MaikataSat_bot](https://twitter.com/MaikataSat_bot)
 ## 運営 / Master
 
 [@mizo0203](https://twitter.com/mizo0203) が運営しています。  
-お問い合わせは <mizo0203@mizo0203.com> までお願いいたします。
+お問い合わせは <mizoguchi.satoki@mizo0203.com> までお願いいたします。
 
 ## アイコン / Icon ※ [MIT License](https://github.com/mizo0203/maikata-satellite-bot/blob/master/LICENSE) の対象外
 
@@ -56,6 +56,6 @@ Copyright 2008 [Google Inc](https://www.google.com/). All rights reserved.
 * Twitter は Twitter,Inc. の商標または登録商標です。
 * 「火焔猫燐」は上海アリス幻樂団のキャラクターです。
 * [@MaikataSat_bot](https://twitter.com/MaikataSat_bot) は非公式アカウントです。  
-  この Bot アカウントに関するお問い合わせは <mizo0203@mizo0203.com> までお願いいたします。
+  この Bot アカウントに関するお問い合わせは <mizoguchi.satoki@mizo0203.com> までお願いいたします。
 
 © 2017 [Satoki Mizoguchi](https://github.com/mizo0203), Licensed under the [MIT License](https://github.com/mizo0203/maikata-satellite-bot/blob/master/LICENSE).
